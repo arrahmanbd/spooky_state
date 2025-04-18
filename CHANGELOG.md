@@ -1,6 +1,6 @@
 # Changelog
 
-## V 1.0.0 - Fluctuation (Release)
+## V 1.0.1 - Fluctuation (Release)
 * **Quantum Leap**: First stable release of **spooky_state** for Flutter.
 * Introduced key quantum concepts:
   - **Wave-Particle Duality** in state management.
