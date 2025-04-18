@@ -25,16 +25,6 @@ Core concepts:
 
 ---
 
-## 🧬 Installation
-
-Add this to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  micro_state: ^1.0.0 
-```
-
----
 
 ## 🌌 Core Concepts
 
