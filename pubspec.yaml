@@ -1,6 +1,6 @@
 name: spooky_state
 description: "A next-gen Flutter state management system inspired by the strange and beautiful world of quantum physics."
-version: 1.0.0
+version: 1.0.1
 license: MIT
 homepage: https://github.com/arrahmanbd/spooky_state
 repository: https://github.com/arrahmanbd/spooky_state
