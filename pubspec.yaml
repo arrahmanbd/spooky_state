@@ -1,0 +1,35 @@
+name: spooky_state
+description: "A new Flutter package project."
+version: 0.0.1
+license: MIT
+homepage: https://github.com/arrahmanbd/spooky_state
+repository: https://github.com/arrahmanbd/spooky_state
+issue_tracker: https://github.com/arrahmanbd/spooky_state/issues
+screenshots:
+  - description: 'Spooky State - Quantum Flutter State Management'
+    path: images/icon.jpg
+environment:
+  sdk: ^3.7.2
+  flutter: ">=1.17.0"
+topics:
+  - state-management
+  - flutter
+  - quantum
+  - reactive
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  windows:
+  web:
