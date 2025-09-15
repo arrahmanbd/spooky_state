@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0 – Entanglement
+## 2.0.0 – Entanglement
 
 ### Added
 
