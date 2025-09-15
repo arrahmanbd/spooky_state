@@ -37,7 +37,7 @@ class WavefunctionObserver<T> extends StatefulWidget {
     required this.waveform,
     required this.builder,
     this.builderWithSignal,
-  }) : assert((builder != null) ^ (builderWithSignal != null));
+  });
 
   @override
   State<WavefunctionObserver<T>> createState() =>
@@ -46,6 +46,7 @@ class WavefunctionObserver<T> extends StatefulWidget {
 
 class _WavefunctionObserverState<T> extends State<WavefunctionObserver<T>> {
   late T _lastWaveValue;
+  // ignore: unused_field
   late QuantumWaveform _signal;
   StreamSubscription<T>? _subscription;
 
@@ -130,42 +131,9 @@ class _WavefunctionProviderState<T> extends State<WavefunctionProvider<T>> {
   }
 }
 
-/// Generic type for any logic wrapper around a SchrodingerBox<T>
+/// Generic type for any logic wrapper around a SchrodingerBox< T >
 typedef WaveformLogic<T> = SchrodingerBox<T>;
 
-/// A reusable provider for any WaveformLogic<T>
-// class LogicProvider<T, L extends WaveformLogic<T>> extends StatefulWidget {
-//   final L Function() create;
-//   final Widget Function(BuildContext context, L logic) builder;
-
-//   const LogicProvider({super.key, required this.create, required this.builder});
-
-//   @override
-//   State<LogicProvider<T, L>> createState() => _LogicProviderState<T, L>();
-// }
-
-// class _LogicProviderState<T, L extends WaveformLogic<T>> extends State<LogicProvider<T, L>> {
-//   late final L _logic;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _logic = widget.create();
-//   }
-
-//   @override
-//   void dispose() {
-//     _logic.collapse(); // automatically dispose the box
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return widget.builder(context, _logic);
-//   }
-// }
-/// sUPPORT mODDLEWARE
-///
 class LogicProvider<T, L extends SchrodingerBox<T>> extends StatefulWidget {
   final L Function() create;
   final Widget Function(BuildContext context, L logic) builder;

@@ -138,6 +138,7 @@ class AsyncQuantumBox<T> extends SchrodingerBox<T> {
 class StreamQuantumBox<T> extends SchrodingerBox<T> {
   StreamQuantumBox({required super.waveform});
 
+  @override
   void attachStream(
     Stream<T> stream, {
     QuantumWaveform signal = QuantumWaveform.fluctuate,

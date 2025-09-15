@@ -109,9 +109,9 @@ class SchrodingerBox<T> implements Listenable {
 
   /// Emit a signal with optional new state
   void emitWithSignal(QuantumWaveform signal, {T? newState}) {
-    if (newState != null && newState != waveform)
+    if (newState != null && newState != waveform) {
       shift(newState, signal: signal);
-    else {
+    } else {
       if (!_entanglementField.isClosed) _entanglementField.add(waveform);
       currentSignal = signal;
     }

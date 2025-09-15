@@ -1,14 +1,30 @@
 # Changelog
 
-## 2.0.0 - Entanglement
+## 2.0 – Entanglement
 
-- Added middleware system for state pre-processing and validation
-- Introduced StreamQuantumBox for async and streaming data handling
-- Implemented QuantumWidget and WavefunctionProvider for safe state access in UI
-- Improved lifecycle management (collapse/decohere) to prevent memory leaks
-- Updated CounterStreamLogic example with start/stop, signals, and robust subscriptions
-- Refined _RestrictedWaveform for safe read-only waveform access
-- Enhanced documentation and inline comments for clarity
+### Added
+
+- Middleware system for `SchrodingerBox` to intercept and modify state updates
+- `StreamQuantumBox` for stream-based async state management
+- `QuantumWidget` with direct logic access in builder
+- Example pages:
+  - `QuantumTogglePage` (boolean toggle logic)
+  - `CounterStreamPage` (streaming counter with signals)
+
+### Changed
+
+- `_RestrictedWaveform` updated to support read-only safe observation
+- Proper lifecycle handling with collapse and subscription management
+
+### Fixed
+
+- Prevented broadcast stream errors when streams emit after collapse
+- Professional handling of `QuantumWaveform` signals in async & stream boxes
+
+### Notes
+
+- Example app available in [`./example`](./example)
+- Recommended for enterprise-ready apps using quantum-inspired state management
 
 ## 1.1.0 - Superposition (Release)
 
