@@ -25,6 +25,7 @@ extension QuantumObservationX<T> on SchrodingerBox<T> {
     return WavefunctionObserver<T>(
       waveform: this,
       builderWithSignal: (context, value, signal) => builder(value, signal),
+      builder: (BuildContext context, T? state) => const SizedBox.shrink(),
     );
   }
 }
@@ -60,6 +61,7 @@ extension QuantumWaveContextExtensions on BuildContext {
     return WavefunctionObserver<T>(
       waveform: waveform,
       builderWithSignal: (_, state, signal) => builder(state, signal),
+      builder: (BuildContext context, T? state) => const SizedBox.shrink(),
     );
   }
 

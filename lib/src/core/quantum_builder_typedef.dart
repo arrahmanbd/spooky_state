@@ -17,7 +17,7 @@ part of 'package:spooky_state/spooky_state.dart';
 ///   },
 /// );
 /// ```
-typedef QuantumBuilder<T> = Widget Function(BuildContext context, T? state);
+typedef QuantumBuilder<T> = Widget Function(BuildContext context, T state);
 
 /// 🌠 QuantumBuilderWithParticle — A signature for building UI based on quantum emissions
 /// and the associated signal waveform.

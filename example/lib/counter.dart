@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:micro_state_example/stream.dart';
 import 'package:spooky_state/spooky_state.dart';
 import 'package:micro_state_example/toggle.dart';
 
-class OldCounter extends SchrodingerBox<int> {
-  final CounterState counter;
-  OldCounter(this.counter) : super(waveform: 0);
-
-  void old() {
-    final x = counter.waveform;
-    final y = x + 10;
-    print(y);
-  }
+// Example async function to fetch data
+Future<String> fetchData() async {
+  await Future.delayed(const Duration(seconds: 2));
+  return 'Fetched Data!';
 }
 
 class CounterState extends SchrodingerBox<int> {
@@ -30,6 +26,27 @@ class CounterPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const CounterStreamPage(),
+          QuantumWidget<String?, AsyncQuantumBox<String>>(
+            create: () => AsyncQuantumBox(waveform: '')..runAsync(fetchData),
+            builder: (context, value, logic) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (logic.currentSignal == QuantumWaveform.observe)
+                    const CircularProgressIndicator()
+                  else
+                    Text(value ?? 'No data',
+                        style: const TextStyle(fontSize: 24)),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => logic.runAsync(fetchData),
+                    child: const Text('Reload'),
+                  ),
+                ],
+              );
+            },
+          ),
           counter.observe(
             (value) => Text(
               'Quantum Value: ${value ?? 0}',

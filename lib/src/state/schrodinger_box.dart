@@ -28,14 +28,34 @@ part of 'package:spooky_state/spooky_state.dart';
 /// See also:
 /// - [QuantumWaveform] for signal types
 /// - [restrictObservation] for controlled visibility
+///
+/// Middleware function signature: receives current and next state,
+/// returns a modified state or null to cancel the update.
+typedef QuantumMiddleware<T> = T? Function(T current, T next);
+
+/// Maintains a single waveform and allows reactive updates, streams, and signals
 class SchrodingerBox<T> implements Listenable {
+  /// Current value of the box
   T waveform;
+
+  /// Current signal/state of the box
   QuantumWaveform currentSignal = QuantumWaveform.idle;
 
+  /// Stream broadcasting waveform changes
   final StreamController<T> _entanglementField =
       StreamController<T>.broadcast();
 
-  Function(SchrodingerBox<T> wave)? _observer;
+  /// Local listeners
+  final List<VoidCallback> _listeners = [];
+
+  /// Middleware chain
+  final List<QuantumMiddleware<T>> _middleware = [];
+
+  /// Stream subscriptions (auto-cancel on collapse)
+  final List<StreamSubscription> _subscriptions = [];
+
+  /// Internal observer & entanglement flags
+  Function(SchrodingerBox<T>)? _observer;
   bool _observerEntangled = false;
   bool _canCollapse = true;
   Listenable? _source;
@@ -45,66 +65,70 @@ class SchrodingerBox<T> implements Listenable {
     this.currentSignal = QuantumWaveform.idle,
   });
 
-  /// The entangled stream of this box, broadcasting changes to observers.
-  Stream<T> get field => _entanglementField.stream;
+  // ==============================
+  // Middleware
+  // ==============================
 
-  /// Whether this box can still emit or has been collapsed.
-  bool get canEmit => _canCollapse;
-  final List<VoidCallback> _listeners = [];
+  /// Add a middleware to transform or block waveform updates
+  void use(QuantumMiddleware<T> middleware) => _middleware.add(middleware);
 
-  @override
-  void addListener(VoidCallback listener) {
-    _listeners.add(listener);
-  }
+  // ==============================
+  // State Emission
+  // ==============================
 
-  @override
-  void removeListener(VoidCallback listener) {
-    _listeners.remove(listener);
-  }
+  /// Emits a new waveform, passing through middleware
+  void shift(T newState, {QuantumWaveform signal = QuantumWaveform.emit}) {
+    if (!_canCollapse) return;
 
-  void _notifyListeners() {
-    for (final l in _listeners) {
-      l();
+    T processedState = newState;
+
+    // Run all middleware
+    for (final mw in _middleware) {
+      final result = mw(waveform, processedState);
+      if (result == null) return; // cancel update
+      processedState = result;
     }
-  }
 
-  /// Emits a new particle (state) into the entangled field.
-  void shift(T newState) {
-    waveform = newState;
-    _entanglementField.add(newState);
+    waveform = processedState;
+    currentSignal = signal;
+
+    if (!_entanglementField.isClosed) _entanglementField.add(processedState);
     _notifyListeners();
   }
 
-  /// Emits the new particle only if it differs from the current one.
+  /// Emits new state only if different
   void emitIfChanged(T newState) {
-    if (waveform != newState) {
-      shift(newState);
-    }
+    if (waveform != newState) shift(newState);
   }
 
-  /// Re-emits the current particle into the field without changing it.
+  /// Re-emit current state without change
   void resonate() {
-    _entanglementField.add(waveform);
+    if (!_entanglementField.isClosed) _entanglementField.add(waveform);
+    currentSignal = QuantumWaveform.resonate;
   }
 
-  /// Emits a signal along with an optional new particle.
+  /// Emit a signal with optional new state
   void emitWithSignal(QuantumWaveform signal, {T? newState}) {
-    if (newState != null && newState != waveform) {
-      waveform = newState;
-      _entanglementField.add(newState);
-    } else {
-      _entanglementField.add(waveform);
+    if (newState != null && newState != waveform)
+      shift(newState, signal: signal);
+    else {
+      if (!_entanglementField.isClosed) _entanglementField.add(waveform);
+      currentSignal = signal;
     }
-    currentSignal = signal;
   }
 
-  /// Sends a signal without modifying the particle.
+  /// Send a signal without changing state
   void sendSignal(QuantumWaveform signal) {
     currentSignal = signal;
-    _entanglementField.add(waveform);
+    if (!_entanglementField.isClosed) _entanglementField.add(waveform);
   }
 
-  bool entangle(Listenable source, Function(SchrodingerBox<T> wave) observer) {
+  // ==============================
+  // Entanglement / Observation
+  // ==============================
+
+  /// Entangle with an external Listenable
+  bool entangle(Listenable source, Function(SchrodingerBox<T>) observer) {
     if (!_observerEntangled) {
       _source = source;
       _observer = observer;
@@ -117,6 +141,7 @@ class SchrodingerBox<T> implements Listenable {
 
   void _observe() => _observer?.call(this);
 
+  /// Remove entanglement
   bool disentangle({Function()? decay}) {
     if (_observerEntangled && _source != null) {
       _observerEntangled = false;
@@ -128,13 +153,41 @@ class SchrodingerBox<T> implements Listenable {
     return false;
   }
 
+  // ==============================
+  // Stream & Async Support
+  // ==============================
+
+  /// Attach a stream to automatically emit values
+  void attachStream(
+    Stream<T> stream, {
+    QuantumWaveform signal = QuantumWaveform.fluctuate,
+  }) {
+    final sub = stream.listen((value) {
+      if (canEmit) shift(value, signal: signal);
+    });
+    _subscriptions.add(sub);
+  }
+
+  // ==============================
+  // Lifecycle
+  // ==============================
+
+  /// Collapse the box and clean up
   void collapse() {
+    // Cancel all stream subscriptions
+    for (final sub in _subscriptions) {
+      sub.cancel();
+    }
+    _subscriptions.clear();
+
     _entanglementField.close();
     _canCollapse = false;
     _source?.removeListener(_observe);
     _resetQuantumState();
+    currentSignal = QuantumWaveform.collapse;
   }
 
+  /// Reset box state optionally with signal
   void decohere({
     QuantumWaveform signal = QuantumWaveform.idle,
     bool clearObservers = true,
@@ -146,13 +199,164 @@ class SchrodingerBox<T> implements Listenable {
   }
 
   void _resetQuantumState({QuantumWaveform signal = QuantumWaveform.idle}) {
-    // ⚡ reset to an "initial" value instead of null
     currentSignal = signal;
     _source = null;
     _observerEntangled = false;
     _observer = null;
   }
+
+  // ==============================
+  // Listenable Implementation
+  // ==============================
+
+  @override
+  void addListener(VoidCallback listener) => _listeners.add(listener);
+
+  @override
+  void removeListener(VoidCallback listener) => _listeners.remove(listener);
+
+  void _notifyListeners() {
+    for (final l in _listeners) {
+      l();
+    }
+  }
+
+  // ==============================
+  // Getters
+  // ==============================
+
+  /// Stream of waveform updates
+  Stream<T> get field => _entanglementField.stream;
+
+  /// Whether box can still emit
+  bool get canEmit => _canCollapse;
 }
+
+// class SchrodingerBox<T> implements Listenable {
+//   T waveform;
+//   QuantumWaveform currentSignal = QuantumWaveform.idle;
+
+//   final StreamController<T> _entanglementField =
+//       StreamController<T>.broadcast();
+
+//   Function(SchrodingerBox<T> wave)? _observer;
+//   bool _observerEntangled = false;
+//   bool _canCollapse = true;
+//   Listenable? _source;
+
+//   SchrodingerBox({
+//     required this.waveform,
+//     this.currentSignal = QuantumWaveform.idle,
+//   });
+
+//   /// The entangled stream of this box, broadcasting changes to observers.
+//   Stream<T> get field => _entanglementField.stream;
+
+//   /// Whether this box can still emit or has been collapsed.
+//   bool get canEmit => _canCollapse;
+//   final List<VoidCallback> _listeners = [];
+
+//   @override
+//   void addListener(VoidCallback listener) {
+//     _listeners.add(listener);
+//   }
+
+//   @override
+//   void removeListener(VoidCallback listener) {
+//     _listeners.remove(listener);
+//   }
+
+//   void _notifyListeners() {
+//     for (final l in _listeners) {
+//       l();
+//     }
+//   }
+
+//   /// Emits a new particle (state) into the entangled field.
+//   void shift(T newState) {
+//     waveform = newState;
+//     _entanglementField.add(newState);
+//     _notifyListeners();
+//   }
+
+//   /// Emits the new particle only if it differs from the current one.
+//   void emitIfChanged(T newState) {
+//     if (waveform != newState) {
+//       shift(newState);
+//     }
+//   }
+
+//   /// Re-emits the current particle into the field without changing it.
+//   void resonate() {
+//     _entanglementField.add(waveform);
+//   }
+
+//   /// Emits a signal along with an optional new particle.
+//   void emitWithSignal(QuantumWaveform signal, {T? newState}) {
+//     if (newState != null && newState != waveform) {
+//       waveform = newState;
+//       _entanglementField.add(newState);
+//     } else {
+//       _entanglementField.add(waveform);
+//     }
+//     currentSignal = signal;
+//   }
+
+//   /// Sends a signal without modifying the particle.
+//   void sendSignal(QuantumWaveform signal) {
+//     currentSignal = signal;
+//     _entanglementField.add(waveform);
+//   }
+
+//   bool entangle(Listenable source, Function(SchrodingerBox<T> wave) observer) {
+//     if (!_observerEntangled) {
+//       _source = source;
+//       _observer = observer;
+//       source.addListener(_observe);
+//       _observerEntangled = true;
+//       return true;
+//     }
+//     return false;
+//   }
+
+//   void _observe() => _observer?.call(this);
+
+//   bool disentangle({Function()? decay}) {
+//     if (_observerEntangled && _source != null) {
+//       _observerEntangled = false;
+//       _source?.removeListener(_observe);
+//       decay?.call();
+//       _source = null;
+//       return true;
+//     }
+//     return false;
+//   }
+
+//   void collapse() {
+//     _entanglementField.close();
+//     _canCollapse = false;
+//     _source?.removeListener(_observe);
+//     _resetQuantumState();
+//   }
+
+//   void decohere({
+//     QuantumWaveform signal = QuantumWaveform.idle,
+//     bool clearObservers = true,
+//   }) {
+//     if (clearObservers) {
+//       _source?.removeListener(_observe);
+//       _resetQuantumState(signal: signal);
+//     }
+//   }
+
+//   void _resetQuantumState({QuantumWaveform signal = QuantumWaveform.idle}) {
+//     // ⚡ reset to an "initial" value instead of null
+//     currentSignal = signal;
+//     _source = null;
+//     _observerEntangled = false;
+//     _observer = null;
+//   }
+// }
 
 /// 🔒 _RestrictedWaveform — A read-only observer of a SchrödingerBox.
 ///
@@ -169,13 +373,16 @@ class SchrodingerBox<T> implements Listenable {
 /// - Clean separation of "controllers" and "observers"
 ///
 /// 🧲 Use `restrictObservation()` to safely create one.
+
 class _RestrictedWaveform<T> extends SchrodingerBox<T> {
-  final SchrodingerBox<T> base;
+  final SchrodingerBox<T> _base;
 
-  _RestrictedWaveform(this.base) : super(waveform: base.waveform);
+  _RestrictedWaveform(this._base) : super(waveform: _base.waveform);
 
+  // ⚠ Mutation methods are forbidden
   @override
-  void shift(T newState) => throw ForbiddenQuantumCollapse("emit($newState)");
+  void shift(T newState, {QuantumWaveform signal = QuantumWaveform.emit}) =>
+      throw ForbiddenQuantumCollapse("shift($newState, $signal)");
 
   @override
   void resonate() => throw ForbiddenQuantumCollapse("resonate()");
@@ -185,36 +392,36 @@ class _RestrictedWaveform<T> extends SchrodingerBox<T> {
       throw ForbiddenQuantumCollapse("emitWithSignal($signal, $newState)");
 
   @override
-  void sendSignal(QuantumWaveform signal) => base.sendSignal(signal);
+  void sendSignal(QuantumWaveform signal) => _base.sendSignal(signal);
 
   @override
-  T get waveform => base.waveform;
+  T get waveform => _base.waveform;
 
   @override
-  QuantumWaveform get currentSignal => base.currentSignal;
+  QuantumWaveform get currentSignal => _base.currentSignal;
 
   @override
-  StreamController<T> get _entanglementField => base._entanglementField;
+  StreamController<T> get _entanglementField => _base._entanglementField;
 
   @override
-  bool get _observerEntangled => base._observerEntangled;
+  bool get _observerEntangled => _base._observerEntangled;
 
   @override
-  Listenable? get _source => base._source;
+  Listenable? get _source => _base._source;
 
   @override
-  Function(SchrodingerBox<T> wave)? get _observer => base._observer;
+  Function(SchrodingerBox<T>)? get _observer => _base._observer;
 
   @override
-  void _observe() => base._observe();
+  void _observe() => _base._observe();
 
   @override
-  bool entangle(Listenable source, Function(SchrodingerBox<T> wave) observer) =>
-      base.entangle(source, observer);
+  bool entangle(Listenable source, Function(SchrodingerBox<T>) observer) =>
+      _base.entangle(source, observer);
 
   @override
-  void collapse() => base.collapse();
+  bool disentangle({Function()? decay}) => _base.disentangle(decay: decay);
 
   @override
-  bool disentangle({Function()? decay}) => base.disentangle(decay: decay);
+  void collapse() => _base.collapse();
 }

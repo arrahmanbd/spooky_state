@@ -90,6 +90,19 @@ counter.collapse();
 ```
 
 ---
+## 🧪 Example App
+
+To see **SchrodingerBox**, **StreamQuantumBox**, and **QuantumWidget** in action, check out the example Flutter app included in this repository.
+
+The example demonstrates:
+
+- **Counter Stream:** Using `StreamQuantumBox` for asynchronous state updates.
+- **Toggle Logic:** A simple boolean toggle implemented with `SchrodingerBox`.
+- **Quantum Signals:** Observing and handling `QuantumWaveform` signals.
+- **Middleware:** Applying middleware for state validation or transformation.
+- **Lifecycle Safety:** Proper `collapse()` and subscription management in widgets.
+
+[See the Example App](./example)
 
 ### 🔭 `WavefunctionObserver<T>`
 

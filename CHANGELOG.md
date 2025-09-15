@@ -1,10 +1,20 @@
 # Changelog
 
+## 2.0.0 - Entanglement
+
+- Added middleware system for state pre-processing and validation
+- Introduced StreamQuantumBox for async and streaming data handling
+- Implemented QuantumWidget and WavefunctionProvider for safe state access in UI
+- Improved lifecycle management (collapse/decohere) to prevent memory leaks
+- Updated CounterStreamLogic example with start/stop, signals, and robust subscriptions
+- Refined _RestrictedWaveform for safe read-only waveform access
+- Enhanced documentation and inline comments for clarity
+
 ## 1.1.0 - Superposition (Release)
 
-♻️ Refactor: Remove nullable waveform from SchrodingerBox
+ Refactor: Remove nullable waveform from SchrodingerBox
 
-## V 1.0.1 - Fluctuation (Release)
+## 1.0.1 - Fluctuation (Release)
 
 * **Quantum Leap**: First stable release of **spooky_state** for Flutter.
 * Introduced key quantum concepts:

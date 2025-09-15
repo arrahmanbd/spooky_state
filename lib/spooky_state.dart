@@ -4,8 +4,11 @@
 ///
 /// Each part of this library represents a fundamental aspect of quantum theory, making it easier to work with Flutter states while embracing the complexity and elegance of the quantum world.
 ///
-/// **Library Structure:**
+/// ⚠️ Note: Although I love quantum physics, this approach may be confusing for
+/// developers without a physics background. Consider migrating this logic to a
+/// dedicated state management layer (e.g., Popsicle) for better clarity and maintainability. —AR
 ///
+/// **Library Structure:**
 /// - **SchrödingerBox**: A container that holds state in an uncertain superposition, collapsing only when observed (or interacted with).
 /// - **WaveFunctionObserver**: Observers that collapse the state upon detection, much like how the wave function collapses when measured.
 /// - **QuantumWaveform**: A representation of the state in its wave-like form, oscillating between potential values.
@@ -27,3 +30,4 @@ part 'src/core/quantum_waveform.dart';
 part 'src/core/quantum_builder_typedef.dart';
 part 'src/core/forbidden_quantum_collapse.dart';
 part 'src/state/quantum_extensions.dart';
+part 'src/core/quantum_widget.dart';
