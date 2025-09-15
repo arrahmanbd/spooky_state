@@ -1,6 +1,11 @@
 # Changelog
 
+## 1.1.0 - Superposition (Release)
+
+♻️ Refactor: Remove nullable waveform from SchrodingerBox
+
 ## V 1.0.1 - Fluctuation (Release)
+
 * **Quantum Leap**: First stable release of **spooky_state** for Flutter.
 * Introduced key quantum concepts:
   - **Wave-Particle Duality** in state management.

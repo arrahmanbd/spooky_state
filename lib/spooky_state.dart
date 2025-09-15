@@ -1,11 +1,11 @@
 /// 🌀 **spooky_state**: Quantum State Management for Flutter
-/// 
+///
 /// This library leverages the mysteries of quantum mechanics to build a state management system that is reactive, scalable, and inspired by the strange behavior of particles and waves.
-/// 
+///
 /// Each part of this library represents a fundamental aspect of quantum theory, making it easier to work with Flutter states while embracing the complexity and elegance of the quantum world.
-/// 
+///
 /// **Library Structure:**
-/// 
+///
 /// - **SchrödingerBox**: A container that holds state in an uncertain superposition, collapsing only when observed (or interacted with).
 /// - **WaveFunctionObserver**: Observers that collapse the state upon detection, much like how the wave function collapses when measured.
 /// - **QuantumWaveform**: A representation of the state in its wave-like form, oscillating between potential values.

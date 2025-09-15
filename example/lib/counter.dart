@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:spooky_state/spooky_state.dart';
 import 'package:micro_state_example/toggle.dart';
 
+class OldCounter extends SchrodingerBox<int> {
+  final CounterState counter;
+  OldCounter(this.counter) : super(waveform: 0);
+
+  void old() {
+    final x = counter.waveform;
+    final y = x + 10;
+    print(y);
+  }
+}
+
 class CounterState extends SchrodingerBox<int> {
   CounterState() : super(waveform: 0);
-
-  void increment() => shift(waveform! + 1);
-  void decrement() => shift(waveform! - 1);
+  void increment() => shift(waveform + 1);
+  void decrement() => shift(waveform - 1);
 }
 
 class CounterPage extends StatelessWidget {
@@ -15,7 +25,7 @@ class CounterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final counter = CounterState();
-
+    print(counter.waveform);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

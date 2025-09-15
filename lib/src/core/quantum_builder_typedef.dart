@@ -37,8 +37,5 @@ typedef QuantumBuilder<T> = Widget Function(BuildContext context, T? state);
 ///   },
 /// );
 /// ```
-typedef QuantumBuilderWithParticle<T> = Widget Function(
-  BuildContext context,
-  T? state,
-  QuantumWaveform signal,
-);
+typedef QuantumBuilderWithParticle<T> =
+    Widget Function(BuildContext context, T? state, QuantumWaveform signal);

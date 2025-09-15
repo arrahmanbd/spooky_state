@@ -6,15 +6,13 @@ class DrivingLogic {
   late SchrodingerBox<bool> canDrive;
 
   DrivingLogic() {
-    age = SchrodingerBox<int>();
+    age = SchrodingerBox<int>(waveform: 0);
     canDrive = SchrodingerBox<bool>(waveform: false);
 
     // Entangle age updates with eligibility logic
     age.entangle(age, (box) {
       final years = box.waveform;
-      if (years != null) {
-        canDrive.shift(years >= 18);
-      }
+      canDrive.shift(years >= 18);
     });
   }
 

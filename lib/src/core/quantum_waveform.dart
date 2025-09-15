@@ -33,25 +33,34 @@ class QuantumWaveform {
   final String value;
   const QuantumWaveform._(this.value);
 
-  static const QuantumWaveform collapse =
-      QuantumWaveform._('collapse'); // Final state
-  static const QuantumWaveform decohere =
-      QuantumWaveform._('decohere'); // End processing
-  static const QuantumWaveform entangle =
-      QuantumWaveform._('entangle'); // Bind state
+  static const QuantumWaveform collapse = QuantumWaveform._(
+    'collapse',
+  ); // Final state
+  static const QuantumWaveform decohere = QuantumWaveform._(
+    'decohere',
+  ); // End processing
+  static const QuantumWaveform entangle = QuantumWaveform._(
+    'entangle',
+  ); // Bind state
   static const QuantumWaveform emit = QuantumWaveform._('emit'); // Emit data
-  static const QuantumWaveform observe =
-      QuantumWaveform._('observe'); // Start observation
-  static const QuantumWaveform superpose =
-      QuantumWaveform._('superpose'); // Pause as wave
-  static const QuantumWaveform idle =
-      QuantumWaveform._('idle'); // Initial or passive state
-  static const QuantumWaveform fluctuate =
-      QuantumWaveform._('fluctuate'); // Re-evaluate
-  static const QuantumWaveform resonate =
-      QuantumWaveform._('resonate'); // Update without change
-  static const QuantumWaveform quantumFlux =
-      QuantumWaveform._('quantum_flux'); // Lagging behind
+  static const QuantumWaveform observe = QuantumWaveform._(
+    'observe',
+  ); // Start observation
+  static const QuantumWaveform superpose = QuantumWaveform._(
+    'superpose',
+  ); // Pause as wave
+  static const QuantumWaveform idle = QuantumWaveform._(
+    'idle',
+  ); // Initial or passive state
+  static const QuantumWaveform fluctuate = QuantumWaveform._(
+    'fluctuate',
+  ); // Re-evaluate
+  static const QuantumWaveform resonate = QuantumWaveform._(
+    'resonate',
+  ); // Update without change
+  static const QuantumWaveform quantumFlux = QuantumWaveform._(
+    'quantum_flux',
+  ); // Lagging behind
   static const QuantumWaveform custom = QuantumWaveform._('custom');
 
   factory QuantumWaveform.customSignal(String value) =>
